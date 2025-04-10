@@ -612,7 +612,7 @@ function extractSecretScanningPushProtectionErrorMessage(stderr: string): {
   bypassURL: string
 } | null {
   const regex =
-    /error[.\s\S]+GITHUB PUSH PROTECTION[.\s\S]+\(?\) [.\s\S]+—— ([.\S\s]+? —)[.\s\S]+—[.\s\S]+commit: (\b[0-9a-f]{5,40}\b) [.\s\S]+path: (\b.+?\b):([0-9]+?)[.\s\S]+\(?\) To push, remove secret from commit\(s\) or follow this URL to allow the secret[.\s\S]+?(https:\/\/github.com\/[.\S]+?unblock-secret\/[\S]+?\b) /g
+    /error[.\s\S]+GITHUB PUSH PROTECTION[.\s\S]+\(?\) [.\s\S]+—— ([.\S\s]+?) —[.\s\S]+—[.\s\S]+commit: (\b[0-9a-f]{5,40}\b) [.\s\S]+path: (\b.+?\b):([0-9]+?)[.\s\S]+\(?\) To push, remove secret from commit\(s\) or follow this URL to allow the secret[.\s\S]+?(https:\/\/github.com\/[.\S]+?unblock-secret\/[\S]+?\b) /g
   const match = regex.exec(stderr)
   if (match) {
     return {
