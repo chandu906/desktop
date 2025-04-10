@@ -97,6 +97,7 @@ export enum PopupType {
   TestIcons = 'TestIcons',
   ConfirmCommitFilteredChanges = 'ConfirmCommitFilteredChanges',
   TestAbout = 'TestAbout',
+  PushProtectionError = 'PushProtectionError',
 }
 
 interface IBasePopup {
@@ -432,6 +433,14 @@ export type PopupDetail =
     }
   | {
       type: PopupType.TestAbout
+    }
+  | {
+      type: PopupType.PushProtectionError
+      tokenDescription: string
+      bypassURL: string
+      commitSha: string
+      path: string
+      lineNumber: number
     }
 
 export type Popup = IBasePopup & PopupDetail

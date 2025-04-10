@@ -604,6 +604,71 @@ export async function discardChangesHandler(
   return null
 }
 
+function extractSecretScanningPushProtectionErrorMessage(stderr: string): {
+  tokenDescription: string
+  commitSha: string
+  path: string
+  lineNumber: number
+  bypassURL: string
+} | null {
+  const regex =
+    /error[.\s\S]+GITHUB PUSH PROTECTION[.\s\S]+\(?\) [.\s\S]+—— ([.\S\s]+? —)[.\s\S]+—[.\s\S]+commit: (\b[0-9a-f]{5,40}\b) [.\s\S]+path: (\b.+?\b):([0-9]+?)[.\s\S]+\(?\) To push, remove secret from commit\(s\) or follow this URL to allow the secret[.\s\S]+?(https:\/\/github.com\/[.\S]+?unblock-secret\/[\S]+?\b) /g
+  const match = regex.exec(stderr)
+  if (match) {
+    return {
+      tokenDescription: match[1],
+      commitSha: match[2],
+      path: match[3],
+      lineNumber: parseInt(match[4]),
+      bypassURL: match[5],
+    }
+  }
+  return null
+}
+
+/**
+ * Attempts to detect whether an error is the result of a failed push
+ * due to insufficient OAuth permissions (missing workflow scope)
+ */
+export async function secretScanningPushProtectionErrorHandler(
+  error: Error,
+  dispatcher: Dispatcher
+) {
+  const e = asErrorWithMetadata(error)
+  if (!e) {
+    return error
+  }
+
+  const gitError = asGitError(e.underlyingError)
+  if (!gitError?.args.includes('push')) {
+    return error
+  }
+
+  const { repository } = e.metadata
+
+  if (!(repository instanceof Repository)) {
+    return error
+  }
+
+  if (repository.gitHubRepository === null) {
+    return error
+  }
+
+  const remoteMessage = getRemoteMessage(coerceToString(gitError.result.stderr))
+  const match = extractSecretScanningPushProtectionErrorMessage(remoteMessage)
+
+  if (!match) {
+    return error
+  }
+
+  dispatcher.showPopup({
+    type: PopupType.PushProtectionError,
+    ...match,
+  })
+
+  return null
+}
+
 /**
  * Extract lines from Git's stderr output starting with the
  * prefix `remote: `. Useful to extract server-specific
