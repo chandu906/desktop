@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Navigation Menu Scroll Color Change</title>
+    <style>
+        /* Reset and base styling */
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            padding-top: 60px;
+            /* to prevent content hiding under nav */
+        }
+        /* Navigation Bar */
+        
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: blue;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;
+            z-index: 999;
+        }
+        /* Navigation list */
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+        /* Navigation links */
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        /* Hover effect */
+        
+        nav ul li a:hover {
+            background-color: white;
+            color: blue;
+        }
+        /* Scrolled state */
+        
+        nav.scrolled {
+            background-color: red;
+        }
+        /* Sample content to scroll */
+        
+        section {
+            height: 800px;
+            padding: 40px;
+            background-color: #f4f4f4;
+            border-bottom: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Menu -->
+    <nav id="navbar">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Portfolio</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Sample Content -->
+    <section>
+        <h1>Welcome to the Website</h1>
+        <p>Scroll down to see the navbar background change from blue to red.</p>
+    </section>
+
+    <section>
+        <h2>Another Section</h2>
+        <p>This helps demonstrate scrolling behavior. You can add more content as needed.</p>
+    </section>
+
+    <!-- JavaScript to handle scroll effect -->
+    <script>
+        const navbar = document.getElementById("navbar");
+
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add("scrolled");
+            } else {
+                navbar.classList.remove("scrolled");
+            }
+        });
+    </script>
+
+</body>
+
+</html>
